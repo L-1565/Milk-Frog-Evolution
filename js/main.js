@@ -1,12 +1,34 @@
-import { initGame, move, undo, restart, getState } from './game.js';
+import { initGame, move, undo, restart, getState, exportGame, restoreGame } from './game.js?v=polish-1';
+import { animateMove } from './motion.js';
 import { playSound, toggleSound } from './effects.js?v=sound-1';
-import { render } from './ui.js?v=frog-images-3';
+import { render as renderBoard } from './ui.js?v=frog-images-3';
 
 const $ = selector => document.querySelector(selector);
 let active = false;
+let busy = false;
+let started = false;
+let best = 0;
+try {
+  best = Math.max(0, Number(localStorage.getItem('frog-best')) || 0);
+  const saved = JSON.parse(localStorage.getItem('frog-save'));
+  started = restoreGame(saved);
+} catch { /* Storage may be unavailable. */ }
+function render(state) {
+  renderBoard(state);
+  best = Math.max(best, state.score);
+  $('#best').textContent = best;
+  try {
+    localStorage.setItem('frog-best', String(best));
+    localStorage.setItem('frog-save', JSON.stringify(exportGame()));
+    $('#save-status').textContent = '已自动保存到此浏览器';
+  } catch { $('#save-status').textContent = '当前浏览器无法保存进度，请勿关闭页面'; }
+}
+$('#start').textContent = started ? '继续游戏' : '开始游戏';
 function showGameOver(state) {
-  if (state.status !== 'over') return;
-  $('#game-over-score').textContent = `这次拿到 ${state.score} 分，要再来一局吗？`;
+  if (state.status === 'playing') return;
+  $('#game-over-title').textContent = state.status === 'won' ? '进化成功！' : '棋盘满啦';
+  $('#result-description').textContent = state.status === 'won' ? '恭喜合成终极 LV.10 奶蛙！' : '已经没有可以移动或合并的奶蛙，本局结束。';
+  $('#game-over-score').textContent = `本局 ${state.score} 分 · 历史最高 ${best} 分，要再来一局吗？`;
   $('#undo-failure').disabled = !state.canUndo;
   if (!$('#game-over').open) $('#game-over').showModal();
 }
@@ -17,14 +39,20 @@ $('#undo-failure').addEventListener('click', () => {
   $('#game-over').close(); render(undo()); playSound('undo'); $('#board').focus();
 });
 $('#view-board').addEventListener('click', () => { $('#game-over').close(); $('#board').focus(); });
-function moveAndRender(direction) {
+async function moveAndRender(direction) {
+  if (busy || !active || $('#info').open || $('#game-over').open) return;
   const before = getState();
   const after = move(direction);
+  busy = true;
+  try {
+    if (JSON.stringify(before.board) !== JSON.stringify(after.board)) await animateMove($('#board'), before.board, direction);
   render(after);
+  $('#board').dataset.feedback = after.score > before.score ? 'merge' : 'move';
   if (after.status !== before.status) showGameOver(after);
   if (after.status !== before.status && after.status !== 'playing') playSound(after.status);
   else if (after.score > before.score) playSound('merge');
   else if (JSON.stringify(after.board) !== JSON.stringify(before.board)) playSound('move');
+  } finally { busy = false; }
 }
 $('#sound').addEventListener('click', () => {
   const enabled = toggleSound();
@@ -36,18 +64,36 @@ $('#start').addEventListener('click', () => {
   active = true;
   $('.intro').hidden = true;
   $('#game').hidden = false;
-  render(initGame());
+  render(started ? getState() : initGame());
+  started = true;
+  showGameOver(getState());
   playSound('start');
   $('#board').focus();
 });
 $('#home').addEventListener('click', () => {
+  if (busy) return;
   active = false;
   $('#game').hidden = true;
   $('.intro').hidden = false;
   $('#start').focus();
+  $('#start').textContent = '继续游戏';
 });
-$('#undo').addEventListener('click', () => { const available = getState().canUndo; render(undo()); if (available) playSound('undo'); });
-$('#restart').addEventListener('click', () => { render(restart()); playSound('start'); });
+$('#undo').addEventListener('click', () => { if (busy) return; const available = getState().canUndo; render(undo()); if (available) playSound('undo'); });
+$('#restart').addEventListener('click', () => { if (busy) return; if (globalThis.confirm && !confirm('重新开始会清空本局进度，确定吗？')) return; render(restart()); playSound('start'); });
+
+let touch;
+$('#board').addEventListener('pointerdown', event => {
+  if (event.isPrimary === false) return;
+  touch = {x:event.clientX, y:event.clientY, id:event.pointerId};
+  $('#board').setPointerCapture?.(event.pointerId);
+});
+$('#board').addEventListener('pointercancel', () => { touch = null; });
+$('#board').addEventListener('pointerup', event => {
+  if (!touch || touch.id !== event.pointerId) return;
+  const dx = event.clientX-touch.x, dy = event.clientY-touch.y; touch = null;
+  if (Math.max(Math.abs(dx),Math.abs(dy)) < 28) return;
+  void moveAndRender(Math.abs(dx)>Math.abs(dy) ? dx>0?'right':'left' : dy>0?'down':'up');
+});
 document.querySelectorAll('[data-direction]').forEach(button => {
   button.addEventListener('click', () => moveAndRender(button.dataset.direction));
 });
@@ -71,7 +117,7 @@ function showRules() {
 奶蛙会一直滑到边缘，或被其他奶蛙挡住，并非每次只走一格。不同等级相遇会停下，不会合并。
 
 3. 怎样操作？
-使用键盘方向键，或 W（上）、A（左）、S（下）、D（右）；手机上点击棋盘下方的方向按钮。每次操作都会影响整个棋盘。
+使用键盘方向键，或 W（上）、A（左）、S（下）、D（右）；手机可在棋盘上滑动，或点击方向按钮。每次操作都会影响整个棋盘。
 
 4. 相同等级才能合并
 移动时，两只相同等级的奶蛙碰在一起，会变成一只高一级的奶蛙。每只奶蛙每次操作最多合并一次，新合成的奶蛙本次不会继续合并。
@@ -89,7 +135,7 @@ function showRules() {
 每次合并获得“新等级 × 100”分，例如合成 LV.2 得 200 分。目标是合成 LV.10！棋盘填满且所有相邻奶蛙都无法合并时，游戏结束。胜利或结束后可撤销或重开。
 
 7. 撤销、重开和声音
-撤销可恢复最近 50 次有效移动前的棋盘和分数；再次移动时随机生成结果可能不同。重新开始会清空当前分数和撤销记录。返回首页后再次开始也是新一局，刷新网页不会保留进度。音效按钮可随时开关声音。
+撤销可恢复最近 50 次有效移动前的棋盘和分数；再次移动时随机生成结果可能不同。重新开始会清空本局进度。返回首页后可继续游戏，进度和最高分自动保存在此浏览器，清除网站数据会删除存档。音效按钮可随时开关声音。
 
 小提示：操作前观察整个棋盘，尽量保留空位，别只盯着一只奶蛙！`);
 }

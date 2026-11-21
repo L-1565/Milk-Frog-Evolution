@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { getState } from '../js/game.js';
+import { getState } from '../js/game.js?v=polish-1';
 
 test('page events integrate with the game and render independent snapshots', async () => {
   const nodes = new Map();
@@ -25,6 +25,7 @@ test('page events integrate with the game and render independent snapshots', asy
     assert.equal(doc.querySelector('.intro').hidden,true);
     let prevented = false;
     doc.keydown({key:'ArrowRight',preventDefault(){prevented=true;}});
+    await new Promise(resolve => setTimeout(resolve, 0));
     assert.equal(prevented,true);
     assert.equal(doc.querySelector('#score').textContent,getState().score);
     click('#restart'); assert.equal(doc.querySelector('#undo').disabled,true);

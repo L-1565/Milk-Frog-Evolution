@@ -17,6 +17,20 @@ let score = 0;
 let history = new HistoryStack();
 let status = "playing";
 
+export function exportGame() {
+    return { version: 1, ...getState(), history: history.data.map(s => ({board: cloneBoard(s.board), score: s.score})) };
+}
+export function restoreGame(saved) {
+    const valid = s => s && Number.isSafeInteger(s.score) && s.score >= 0 &&
+        Array.isArray(s.board) && s.board.length === 4 && s.board.every(row => Array.isArray(row) && row.length === 4 && row.every(v => Number.isInteger(v) && v >= 0 && v <= 10));
+    if (!saved || saved.version !== 1 || !valid(saved) || !saved.board.flat().some(Boolean) ||
+        !Array.isArray(saved.history) || saved.history.length > 50 || !saved.history.every(valid)) return false;
+    board = cloneBoard(saved.board); score = saved.score;
+    history.clear(); saved.history.forEach(s => history.push(s));
+    status = board.some(row => row.includes(10)) ? 'won' : hasMoves(board) ? 'playing' : 'over';
+    return true;
+}
+
 // 初始化游戏
 export function initGame() {
     board = createEmptyBoard();
