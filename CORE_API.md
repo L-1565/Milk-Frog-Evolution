@@ -6,4 +6,4 @@
 
 状态为 {board, score, highestLevel, status, canUndo}，status 为 playing/won/over。棋盘为 4×4，0 表示空位，1–10 表示等级。相同等级每回合仅合并一次，最高 10 级，合并加新等级×100 分。有效移动后随机生成一个棋子（90% 一级、10% 二级）；无效移动不生成棋子、不记历史。达到十级胜利；无空位且无可合并相邻格时失败。撤销最多保留 50 步，不回放随机数序列。
 
-运行 npm test（Node.js 22），无需安装依赖。本项目没有构建配置。首页尚未接入游戏模块，完整 UI 与交互仍需成员 B 集成。
+运行 npm test（Node.js 22），无需安装依赖。本项目没有构建配置。首页已通过 main.js 和 ui.js 接入核心模块，支持键盘与屏幕按钮、撤销、重开和结束提示。请通过本地 HTTP 服务打开 index.html（例如 python -m http.server 8000），不要直接以 file:// 打开 ES module。

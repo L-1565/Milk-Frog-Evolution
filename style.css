@@ -1,4 +1,19 @@
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button:not(:disabled) { cursor: pointer; }
+button:focus-visible, .board:focus-visible { outline: 3px solid #2c6848; outline-offset: 4px; }
+.game { width: min(100%, 480px); text-align: center; padding-bottom: 50px; }
+.board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px; border-radius: 18px; background: #acc59a; }
+.tile { aspect-ratio: 1; display: grid; place-items: center; border-radius: 12px; background: #dce8d2; font-size: clamp(12px, 3vw, 20px); font-weight: 800; }
+.tile:not(.tile-0) { background: #fff9dc; }
+.tile-3, .tile-4 { color: #39712f; background: #d6efaa !important; }
+.tile-5, .tile-6 { background: #f2dd92 !important; }
+.tile-7, .tile-8, .tile-9, .tile-10 { color: #fff; background: #54894c !important; }
+.controls, .directions { display: flex; justify-content: center; gap: 8px; margin: 16px 0; }
+.controls button, .directions button, dialog button { padding: 10px 16px; background: #d9efbd; color: #244638; }
+dialog { max-width: min(90vw, 480px); border: 0; border-radius: 20px; padding: 26px; color: #244638; line-height: 1.8; }
+dialog::backdrop { background: #24463888; }
+dialog button { margin-top: 20px; }
 :root { color-scheme: light; font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif; color: #244638; background: #f3f6e8; }
 body { min-width: 320px; min-height: 100vh; margin: 0; }
 .home { position: relative; display: grid; min-height: 100vh; place-items: center; overflow: hidden; padding: 48px 20px 28px; background: radial-gradient(ellipse at 50% 42%, #fffef5 0, #f7f7e9 48%, #e7f0d9 100%); }
