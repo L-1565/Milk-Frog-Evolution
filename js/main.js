@@ -1,13 +1,29 @@
-import { initGame, move, undo, restart } from './game.js';
+import { initGame, move, undo, restart, getState } from './game.js';
+import { playSound, toggleSound } from './effects.js?v=sound-1';
 import { render } from './ui.js?v=frog-images-3';
 
 const $ = selector => document.querySelector(selector);
 let active = false;
+function moveAndRender(direction) {
+  const before = getState();
+  const after = move(direction);
+  render(after);
+  if (after.status !== before.status && after.status !== 'playing') playSound(after.status);
+  else if (after.score > before.score) playSound('merge');
+  else if (JSON.stringify(after.board) !== JSON.stringify(before.board)) playSound('move');
+}
+$('#sound').addEventListener('click', () => {
+  const enabled = toggleSound();
+  $('#sound').textContent = enabled ? '音效：开' : '音效：关';
+  $('#sound').setAttribute('aria-pressed', String(enabled));
+  if (enabled) playSound('start');
+});
 $('#start').addEventListener('click', () => {
   active = true;
   $('.intro').hidden = true;
   $('#game').hidden = false;
   render(initGame());
+  playSound('start');
   $('#board').focus();
 });
 $('#home').addEventListener('click', () => {
@@ -16,16 +32,16 @@ $('#home').addEventListener('click', () => {
   $('.intro').hidden = false;
   $('#start').focus();
 });
-$('#undo').addEventListener('click', () => render(undo()));
-$('#restart').addEventListener('click', () => render(restart()));
+$('#undo').addEventListener('click', () => { const available = getState().canUndo; render(undo()); if (available) playSound('undo'); });
+$('#restart').addEventListener('click', () => { render(restart()); playSound('start'); });
 document.querySelectorAll('[data-direction]').forEach(button => {
-  button.addEventListener('click', () => render(move(button.dataset.direction)));
+  button.addEventListener('click', () => moveAndRender(button.dataset.direction));
 });
 const keys = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right' };
 document.addEventListener('keydown', event => {
   if (!active || $('#info').open || event.ctrlKey || event.altKey || event.metaKey) return;
   const direction = keys[event.key] || keys[event.key.toLowerCase()];
-  if (direction) { event.preventDefault(); render(move(direction)); }
+  if (direction) { event.preventDefault(); moveAndRender(direction); }
 });
 function showInfo(title, text) {
   $('#info-title').textContent = title;
