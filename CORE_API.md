@@ -1,6 +1,6 @@
 # 成员 A 核心接口
 
-成员 A：js/board.js、js/history.js、js/game.js。保留上传包原有实现；成员 B 的 ui.js、effects.js、main.js 以及首页与样式均未改动。README 当前为空，仓库未提供更详细分工约定；以下记录现有接口，供 UI 集成。
+成员 A：js/board.js、js/history.js、js/game.js。成员 B 提供首页及样式；main.js、ui.js 已补充联调实现，effects.js 当前为空。项目运行、测试和协作说明见 README.md；以下记录核心接口，供 UI 集成。
 
 浏览器使用 ES module 导入 game.js。initGame() 初始化两个随机棋子；move(direction) 接受 left/right/up/down；undo() 恢复上一次有效移动前的棋盘和分数；restart() 清空历史并重新初始化；getState() 返回独立快照；isGameOver() 返回是否胜利或失败。
 
