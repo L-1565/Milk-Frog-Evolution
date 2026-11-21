@@ -32,7 +32,10 @@ test('page events integrate with the game and render independent snapshots', asy
     const before = getState();
     doc.keydown({key:'ArrowLeft',preventDefault(){throw Error('modal must block game');}});
     assert.deepEqual(getState(),before);
-    click('#close-info'); click('#collection'); assert.match(doc.querySelector('#info-body').textContent,/LV.10/);
+    click('#close-info'); click('#collection');
+    const cards = doc.querySelector('#info-body').children[0].children;
+    assert.equal(cards.length,10);
+    assert.equal(cards[9].children[0].src,'assets/frogs/level-10.jpg');
     click('#close-info'); click('#home'); assert.equal(doc.querySelector('#game').hidden,true);
   } finally { delete globalThis.document; }
 });

@@ -29,9 +29,26 @@ document.addEventListener('keydown', event => {
 });
 function showInfo(title, text) {
   $('#info-title').textContent = title;
+  $('#info-body').replaceChildren();
   $('#info-body').textContent = text;
   $('#info').showModal();
 }
 $('#rules').addEventListener('click', () => showInfo('游戏规则', '使用方向键、WASD 或屏幕按钮移动。相同等级的奶蛙合并后升一级，每只每回合仅合并一次。合并获得新等级 × 100 分。有效移动后生成一只新奶蛙，达到十级即胜利。棋盘填满且无法合并时结束。可撤销最近 50 步。'));
-$('#collection').addEventListener('click', () => showInfo('奶蛙图鉴', '奶蛙共有 LV.1 至 LV.10 十个等级。两只同等级奶蛙可合成下一等级；LV.10 为最终形态。新出现的奶蛙有 90% 概率为 LV.1、10% 概率为 LV.2。'));
 $('#close-info').addEventListener('click', () => $('#info').close());
+$('#collection').addEventListener('click', () => {
+  showInfo('奶蛙图鉴', '');
+  const gallery = document.createElement('div');
+  gallery.className = 'collection-grid';
+  gallery.replaceChildren(...Array.from({ length: 10 }, (_, index) => {
+    const card = document.createElement('figure');
+    const image = document.createElement('img');
+    image.src = `assets/frogs/level-${index + 1}.jpg`;
+    image.alt = `LV.${index + 1} 奶蛙`;
+    const caption = document.createElement('figcaption');
+    caption.textContent = `LV.${index + 1}`;
+    card.replaceChildren(image, caption);
+    return card;
+  }));
+  $('#info-body').replaceChildren(gallery);
+});
+

@@ -4,7 +4,14 @@ export function render(state, root = document) {
   board.replaceChildren(...state.board.flatMap((row, r) => row.map((level, c) => {
     const cell = board.ownerDocument.createElement('div');
     cell.className = `tile tile-${level}`;
-    cell.textContent = level ? `🐸 LV.${level}` : '';
+    if (level) {
+      const image = board.ownerDocument.createElement('img');
+      image.src = `assets/frogs/level-${level}.jpg`;
+      image.alt = `LV.${level} 奶蛙`;
+      const label = board.ownerDocument.createElement('span');
+      label.textContent = `LV.${level}`;
+      cell.replaceChildren(image, label);
+    }
     cell.setAttribute('aria-label', `第${r + 1}行第${c + 1}列：${level ? `等级${level}` : '空'}`);
     return cell;
   })));
