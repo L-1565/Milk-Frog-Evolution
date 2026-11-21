@@ -1,5 +1,5 @@
 import { initGame, move, undo, restart } from './game.js';
-import { render } from './ui.js';
+import { render } from './ui.js?v=frog-images-3';
 
 const $ = selector => document.querySelector(selector);
 let active = false;
