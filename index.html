@@ -21,7 +21,7 @@
           <button id="rules" type="button">游戏规则</button>
           <button id="collection" type="button">奶蛙图鉴</button>
         </div>
-        <p class="hint">方向键 / WASD 或点击方向按钮移动</p>
+        <p class="hint">每次操作，整个棋盘的奶蛙一起移动，无需选择。</p>
       </div>
     </section>
     <section id="game" class="game" hidden aria-label="游戏棋盘">
@@ -31,11 +31,12 @@
       <div id="board" class="board" role="group" aria-label="4 行 4 列棋盘" tabindex="0"></div>
       <div class="controls"><button id="undo">撤销</button><button id="restart">重新开始</button><button id="home">返回首页</button><button id="sound" aria-pressed="true">音效：开</button></div>
       <div class="directions" aria-label="移动方向"><button data-direction="up" aria-label="向上">↑</button><button data-direction="left" aria-label="向左">←</button><button data-direction="down" aria-label="向下">↓</button><button data-direction="right" aria-label="向右">→</button></div>
-      <p class="hint">方向键 / WASD 或点击方向按钮移动，相同等级合成进化。</p>
+      <p class="hint">所有奶蛙一起向所选方向滑到底，可跨多格；无需选中某只奶蛙。</p>
+      <button id="game-rules" type="button">查看详细规则</button>
     </section>
     <dialog id="info"><h2 id="info-title"></h2><div id="info-body"></div><button id="close-info">关闭</button></dialog>
     <footer>一起来收集所有奶蛙吧！</footer>
   </main>
-  <script type="module" src="js/main.js?v=sound-1"></script>
+  <script type="module" src="js/main.js?v=rules-1"></script>
 </body>
 </html>
