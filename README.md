@@ -92,5 +92,3 @@ npm test
 ## 发布与协作
 
 本项目通过 GitHub Pages 发布：仓库 **Settings → Pages**，选择 **Deploy from a branch**，来源为 **main / (root)**。推送后可在仓库 Actions 中查看部署结果。
-
-提交修改前先获取并合并远程更新，运行测试并审阅差异。多人共同编辑首页和界面模块时，应逐项处理冲突，避免用旧文件整体覆盖其他成员的更新。
