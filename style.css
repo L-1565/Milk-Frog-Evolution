@@ -1,4 +1,15 @@
 * { box-sizing: border-box; }
+.swipe-tip { color: #39712f; font-weight: 700; font-size: 14px; }
+#game .directions { display: grid; grid-template-columns: repeat(3, 58px); grid-template-rows: repeat(2, 54px); gap: 8px; }
+.directions [data-direction="up"] { grid-area: 1 / 2; }
+.directions [data-direction="left"] { grid-area: 2 / 1; }
+.directions [data-direction="down"] { grid-area: 2 / 2; }
+.directions [data-direction="right"] { grid-area: 2 / 3; }
+#game .directions button { font-size: 25px; padding: 0; touch-action: manipulation; box-shadow: 0 3px 0 #acc59a; }
+#game .directions button:active { transform: translateY(2px); box-shadow: none; }
+#kiss-reward { margin: 16px auto; }
+#kiss-reward img { display: block; width: min(100%, 220px); max-height: 220px; object-fit: contain; margin: auto; border-radius: 18px; }
+#kiss-reward figcaption { margin-top: 10px; color: #2c6848; font-weight: 800; }
 .board { touch-action: none; user-select: none; }
 .board img { pointer-events: none; }
 .board[data-feedback="merge"] .tile:not(.tile-0) { animation: frog-pop 180ms ease-out; }

@@ -27,6 +27,7 @@ $('#start').textContent = started ? '继续游戏' : '开始游戏';
 function showGameOver(state) {
   if (state.status === 'playing') return;
   $('#game-over-title').textContent = state.status === 'won' ? '进化成功！' : '棋盘满啦';
+  $('#kiss-reward').hidden = state.status !== 'won';
   $('#result-description').textContent = state.status === 'won' ? '恭喜合成终极 LV.10 奶蛙！' : '已经没有可以移动或合并的奶蛙，本局结束。';
   $('#game-over-score').textContent = `本局 ${state.score} 分 · 历史最高 ${best} 分，要再来一局吗？`;
   $('#undo-failure').disabled = !state.canUndo;
