@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>奶蛙棋盘算法测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+        .pass { color: green; }
+        .fail { color: red; }
+        pre { background: #eee; padding: 12px; }
+    </style>
+</head>
+<body>
+    <h2>奶蛙大进化：棋盘算法测试</h2>
+    <div id="result"></div>
+
+    <script type="module">
+        import { moveBoard } from "./board.js";
+
+        const tests = [
+            {
+                name: "向左：基本合并",
+                board: [
+                    [1, 0, 1, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ],
+                direction: "left",
+                expected: [
+                    [2, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ]
+            },
+            {
+                name: "向左：四个相同奶蛙",
+                board: [
+                    [1, 1, 1, 1],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ],
+                direction: "left",
+                expected: [
+                    [2, 2, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ]
+            },
+            {
+                name: "向右：基本合并",
+                board: [
+                    [1, 0, 1, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ],
+                direction: "right",
+                expected: [
+                    [0, 0, 0, 2],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ]
+            },
+            {
+                name: "向上：基本合并",
+                board: [
+                    [1, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [1, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ],
+                direction: "up",
+                expected: [
+                    [2, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ]
+            },
+            {
+                name: "向下：基本合并",
+                board: [
+                    [1, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [1, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ],
+                direction: "down",
+                expected: [
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [2, 0, 0, 0]
+                ]
+            }
+        ];
+
+        const output = document.getElementById("result");
+        let passed = 0;
+
+        for (const test of tests) {
+            const result = moveBoard(
+                test.board,
+                test.direction
+            );
+
+            const success =
+                JSON.stringify(result.board) ===
+                JSON.stringify(test.expected);
+
+            if (success) passed++;
+
+            const item = document.createElement("div");
+            item.className = success ? "pass" : "fail";
+
+            item.innerHTML =
+                `<h3>${success ? "✓ 通过" : "✗ 失败"}：${test.name}</h3>`;
+
+            output.appendChild(item);
+
+            if (!success) {
+                const detail = document.createElement("pre");
+                detail.textContent =
+                    "实际结果：\n" +
+                    JSON.stringify(result.board, null, 2) +
+                    "\n预期结果：\n" +
+                    JSON.stringify(test.expected, null, 2);
+
+                output.appendChild(detail);
+            }
+        }
+
+        const summary = document.createElement("h2");
+        summary.textContent =
+            `测试完成：${passed}/${tests.length} 通过`;
+
+        output.prepend(summary);
+    </script>
+</body>
+</html>
