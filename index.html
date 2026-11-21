@@ -35,8 +35,15 @@
       <button id="game-rules" type="button">查看详细规则</button>
     </section>
     <dialog id="info"><h2 id="info-title"></h2><div id="info-body"></div><button id="close-info">关闭</button></dialog>
+    <dialog id="game-over" class="game-over" aria-labelledby="game-over-title" aria-describedby="game-over-score">
+      <div class="sad-face" aria-hidden="true">🥺</div>
+      <h2 id="game-over-title">棋盘满啦</h2>
+      <p>已经没有可以移动或合并的奶蛙，本局结束。</p>
+      <p id="game-over-score"></p>
+      <div class="controls"><button id="play-again" class="primary">再玩一次</button><button id="undo-failure">撤销一步</button><button id="view-board">查看棋盘</button></div>
+    </dialog>
     <footer>一起来收集所有奶蛙吧！</footer>
   </main>
-  <script type="module" src="js/main.js?v=rules-1"></script>
+  <script type="module" src="js/main.js?v=game-over-1"></script>
 </body>
 </html>

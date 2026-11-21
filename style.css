@@ -9,6 +9,12 @@
 .collection-grid img { width: 100%; aspect-ratio: 1; object-fit: contain; background: white; border-radius: 10px; }
 dialog { max-height: 85vh; overflow-y: auto; }
 #info-body { white-space: pre-line; }
+.game-over { width: min(90vw, 460px); text-align: center; padding: 30px 24px; box-shadow: 0 20px 70px #24463840; background: #fffef5; }
+.game-over::backdrop { background: #24463899; backdrop-filter: blur(3px); }
+.game-over .sad-face { font-size: 64px; line-height: 1.2; }
+.game-over h2 { margin: 16px 0 8px; color: #2c6848; font-size: 30px; }
+.game-over p { color: #56765a; }
+.game-over .primary { background: #76ad62; color: white; }
 [hidden] { display: none !important; }
 button:not(:disabled) { cursor: pointer; }
 button:focus-visible, .board:focus-visible { outline: 3px solid #2c6848; outline-offset: 4px; }
